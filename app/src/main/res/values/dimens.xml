@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="pad">50dp</dimen>
+    <dimen name="logo_width">140dp</dimen>
+    <dimen name="logo_hight">70dp</dimen>
+    <dimen name="width">400dp</dimen>
+    <dimen name="margin_middle">20dp</dimen>
+    <dimen name="margintop_height">170dp</dimen>
+    <dimen name="margintop_height_min">140dp</dimen>
+    <dimen name="textsize">70sp</dimen>
+    <dimen name="textsize_max">90sp</dimen>
+</resources>

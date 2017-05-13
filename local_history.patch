@@ -1,0 +1,153 @@
+Index: app/src/main/java/com/hwx/safelock/safelock/activity/BaseMainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/hwx/safelock/safelock/activity/BaseMainActivity.java	(revision )
++++ app/src/main/java/com/hwx/safelock/safelock/activity/BaseMainActivity.java	(revision )
+@@ -26,6 +26,8 @@
+ import com.hwx.safelock.safelock.Constants;
+ import com.hwx.safelock.safelock.R;
+ import com.hwx.safelock.safelock.activity.broadcast.CommandReceiver;
++import com.hwx.safelock.safelock.db.ConfigBean;
++import com.hwx.safelock.safelock.db.GreenDaoManager;
+ import com.hwx.safelock.safelock.util.ACache;
+ import com.hwx.safelock.safelock.util.DialogUtil;
+ import com.hwx.safelock.safelock.util.FileUtil;
+@@ -37,6 +39,8 @@
+ 
+ import java.io.File;
+ import java.io.InputStream;
++import java.util.ArrayList;
++import java.util.List;
+ import java.util.Timer;
+ import java.util.TimerTask;
+ 
+@@ -48,7 +52,6 @@
+ 
+ public abstract class BaseMainActivity extends AppCompatActivity {
+     public static String videoUrl;
+-    protected String filePath = "";
+     private boolean isTest = false;
+     public static SoundPool soundPool;
+     public static int anInt1, anInt2, anInt3;
+@@ -98,40 +101,32 @@
+         initData();
+     }
+ 
+-    private void initData(){
++    private void initData() {
+         new Thread(new Runnable() {
+             @Override
+             public void run() {
+                 //此处先获取视频资源
+-                filePath = FileUtil.getSDPath() + "/居一格";
+-            //url="file:///android_asset/video.mp4";
++                //url="file:///android_asset/video.mp4";
+-            File file=new File(filePath+"/url");
+-            String a1= ACache.get(file).getAsString("videoUrl");
+-            String a2=ACache.get(file).getAsString("videoUrlTag");
+-            //String a1=AppConfig.getInstance().getString("videoUrl","");
+-            //String a2=AppConfig.getInstance().getString("videoUrlTag","");
++                ConfigBean configBean=GreenDaoManager.getInstance().getSession().getConfigBeanDao().load(Constants.DB_KEY);
++                if (configBean==null)
++                    return;
++                String a1 = configBean.getVideoUrl();
++                String a2 = configBean.getVideoUrlTag();
+-            if (!TextUtils.isEmpty(a1)) {
++                if (!TextUtils.isEmpty(a1)) {
+-                videoUrl=a1;
++                    videoUrl = a1;
+-            }else if (!TextUtils.isEmpty(a2)) {
++                } else if (!TextUtils.isEmpty(a2)) {
+-                videoUrl=a2;
++                    videoUrl = a2;
+-            }
++                }
+ 
+-            String id = FileUtil.readTxtFile(new File(filePath + "/device.txt"));
++                String id = configBean.getUserId();
+-            if (!TextUtils.isEmpty(id)) {
+-                AppConfig.getInstance().putString("deviceId", id.trim());
+-                LogUtils.e("set id for " + id);
+-            }
++                if (!TextUtils.isEmpty(id)) {
++                    AppConfig.getInstance().putString("deviceId", id.trim());
++                    LogUtils.e("set id for " + id);
++                }
+-            String server = FileUtil.readTxtFile(new File(filePath + "/server.txt"));
+-            if (!TextUtils.isEmpty(server)) {
+-                if (!(server.length()<10)) {
+-                    HttpUtilS.server = server;
+-                    LogUtils.e("set server for " + server);
+-                }
+-            }
+-            //DialogUtil.showInfoWithStatus(mSVProgressHUD, "\n设备号：" + AppConfig.getInstance().getString("deviceId", ""));
+-            initPlayer();
++                //DialogUtil.showInfoWithStatus(mSVProgressHUD, "\n设备号：" + AppConfig.getInstance().getString("deviceId", ""));
++                initPlayer();
+-            HttpUtilS.refreshApplication(BaseMainActivity.this,filePath, lHost,true);
++                HttpUtilS.refreshApplication(BaseMainActivity.this,a2, lHost, true);
+-        }
++            }
+         }).start();
+     }
+ 
+@@ -314,7 +309,10 @@
+                 refreshDoor();
+             }
+             if (number%1800==0){//半小时刷新一次软件升级
+-                HttpUtilS.refreshApplication(BaseMainActivity.this,filePath, lHost,false);
++                ConfigBean configBean=GreenDaoManager.getInstance().getSession().getConfigBeanDao().load(Constants.DB_KEY);
++                if (configBean==null)
++                    return;
++                HttpUtilS.refreshApplication(BaseMainActivity.this,configBean.getVideoUrlTag(), lHost,false);
+             }
+         }
+     };
+@@ -348,45 +346,5 @@
+                 initPlayer();
+             }
+         }
+-    }
+-    @Deprecated
+-    private void initFile(final Activity context, final InterFaceUtil.OnclickInterFaceOver over) {
+-        new Thread(new Runnable() {
+-            @Override
+-            public void run() {
+-            try {
+-                boolean has = false;
+-                String[] paths = FileUtil.getExtSDCardPath(context);
+-                for (String path : paths) {
+-                    File at = new File(path + "/居一格");
+-                    if (at.exists()) {
+-                        if (path.contains(FileUtil.getInnerSDCardPath())) {
+-                            has=true;
+-                            continue;
+-                        }
+-                        DialogUtil.showInfoWithStatus(mSVProgressHUD, "开始加载资源文件...");
+-                        has = true;
+-                        try {
+-                            FileUtil.copyFolder(at.getAbsolutePath(), filePath);
+-                        } catch (Exception e) {
+-                            e.printStackTrace();
+-                        }
+-                        break;
+-                    } else {
+-                        at = null;
+-                        continue;
+-                    }
+-                }
+-                if (!has) {
+-                    InputStream is = getAssets().open("video.mp4");
+-                    InputStream is2 = getAssets().open("device.txt");
+-                    FileUtil.copyFilesFassets(is, is2, filePath, "video.mp4", "device.txt", over);
+-                }else {
+-                    over.onClick();
+-                }
+-            } catch (Exception e) {
+-                e.printStackTrace();
+-            }
+-        }}).start();
+     }
+ }

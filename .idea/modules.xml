@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/QRCodeScanZbar/QRCodeScanZbar.iml" filepath="$PROJECT_DIR$/QRCodeScanZbar/QRCodeScanZbar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SafeLock.iml" filepath="$PROJECT_DIR$/SafeLock.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ijkplay/ijkplay.iml" filepath="$PROJECT_DIR$/ijkplay/ijkplay.iml" />
+      <module fileurl="file://$PROJECT_DIR$/installtool/installtool.iml" filepath="$PROJECT_DIR$/installtool/installtool.iml" />
+      <module fileurl="file://$PROJECT_DIR$/svprogresshud/svprogresshud.iml" filepath="$PROJECT_DIR$/svprogresshud/svprogresshud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vitamio/vitamio.iml" filepath="$PROJECT_DIR$/vitamio/vitamio.iml" />
+    </modules>
+  </component>
+</project>

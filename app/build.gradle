@@ -1,0 +1,62 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao' // apply plugin
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25.0.0'
+    defaultConfig {
+        applicationId "com.hwx.safelock.safelock"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 5
+        versionName "2.3"//2.0正价
+        // code2:2.0-修复修改设备号失败问题
+        // code3:2.1-在线更新APK
+        // code4:2.2-
+        // code5:2.3-修复文件下载中没有火在显示
+        // code6:2.4-数据库加入，
+    }
+    greendao {
+        //版本号，升级时可配置
+        schemaVersion 1
+    }
+    buildTypes {
+        debug {
+            // 显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            versionNameSuffix "-debug"
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+//            signingConfig signingConfigs.debug
+        }
+        release {
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            zipAlignEnabled true
+            minifyEnabled false
+            shrinkResources false
+//            signingConfig signingConfigs.release
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    //compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile project(':QRCodeScanZbar')
+    //compile 'com.bigkoo:svprogresshud:1.0.6'
+    compile project(':svprogresshud')
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.6.2'
+    compile 'com.umeng.analytics:analytics:latest.integration'
+    compile 'com.zhy:okhttputils:2.6.2'
+    compile 'com.ldoublem.loadingview:loadingviewlib:1.0'
+    compile 'com.android.support:recyclerview-v7:24.1.1'
+
+    compile 'org.greenrobot:greendao:3.2.2' // add library
+}

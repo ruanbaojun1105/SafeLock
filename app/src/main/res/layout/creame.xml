@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/captureContainter"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+    android:padding="20dp">
+
+<SurfaceView
+    android:id="@+id/capturePreview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/scan_prompt_label"
+    android:textColor="@color/white"
+    android:textSize="20sp"
+    android:id="@+id/textView"
+    android:layout_alignParentBottom="true"
+    android:layout_centerHorizontal="true" />
+
+<RelativeLayout
+    android:id="@+id/captureCropLayout"
+    android:layout_width="450dp"
+    android:layout_height="450dp"
+    android:background="@drawable/capture"
+    android:contentDescription="@string/app_name"
+    android:layout_centerVertical="true"
+    android:layout_centerHorizontal="true"
+    >
+
+    <ImageView
+        android:id="@+id/captureScanLine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="4dip"
+        android:background="@drawable/scan_line"
+        android:contentDescription="@string/app_name" />
+</RelativeLayout>
+</RelativeLayout>

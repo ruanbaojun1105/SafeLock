@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">居一格快递柜</string>
+    <string name="error_configuration">Please configure your serial port first.</string>
+<string name="error_security">You do not have read/write permission to the serial
+		port.</string>
+<string name="error_unknown">The serial port can not be opened for an unknown
+		reason.</string>
+    <string name="jixu">继续存入请选择 “下一步”</string>
+    <string name="fanhui">返回请选择 “上一步”</string>
+    <string name="dfdas">请先进入后台管理设置设备ID</string>
+    <string name="vadfs">hi</string>
+</resources>

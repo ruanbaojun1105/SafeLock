@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="GBK">
+    <file url="file://$PROJECT_DIR$/app/src/main/java/android_serialport_api/SerialPortServer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/activity/BaseMainActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/activity/GetEnityActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/activity/GetSuccessActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/activity/MainActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/activity/SaveEnityActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/activity/SaveLockRestDetailActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/activity/SavePhoneOrderActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/activity/SaveSuccessActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/activity/VideoActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/activity/broadcast/BaseArrayListAdapter.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/activity/broadcast/ItemClickAdapter.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/util/DialogUtil.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/util/FileUtil.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/util/HttpUtilS.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/hwx/safelock/safelock/util/ScreenParamsUtil.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/installtool/src/main/java/com/hwx/camera_doul/install_tool/Application.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/installtool/src/main/java/com/hwx/camera_doul/install_tool/FileUtil.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/installtool/src/main/java/com/hwx/camera_doul/install_tool/HttpUtil.java" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>

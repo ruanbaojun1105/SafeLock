@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:id="@+id/background"
+        android:scaleType="fitXY"
+        android:contentDescription="@string/vadfs"
+        />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="40dp"
+        >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:layout_marginTop="@dimen/margintop_height_min"
+            android:layout_marginLeft="80dp"
+            >
+
+            <TextView
+                android:text="柜门使用情况"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text"
+                android:textSize="@dimen/textsize"
+                android:gravity="center"
+                android:layout_marginLeft="20dp"
+                android:textStyle="bold"
+                />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/detail_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/edittext_bg"
+                android:layout_weight="1"
+                android:layout_marginTop="20dp"
+                ></android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:layout_marginTop="@dimen/margintop_height_min"
+            android:layout_marginLeft="50dp"
+            >
+
+            <TextView
+                android:text="请选择柜门"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text"
+                android:textSize="@dimen/textsize"
+                android:ems="8"
+                android:textStyle="bold"
+                />
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:textSize="60sp"
+                android:gravity="center_vertical"
+                android:ems="5"
+                android:maxLength="5"
+                android:inputType="phone"
+                android:id="@+id/input_phone"
+                android:textColor="@color/text"
+                android:background="@drawable/edittext_bg"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="10dp"
+                android:imeOptions="flagNoExtractUi"
+                android:textStyle="bold"
+                />
+            <requestFocus />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
