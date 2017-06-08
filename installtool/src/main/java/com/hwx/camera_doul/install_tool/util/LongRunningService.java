@@ -72,4 +72,21 @@ public class LongRunningService extends Service {
         return isRunning;
     }
 
+    public static boolean isServiceRunning(Context context, String serviceName) {
+
+        boolean isRunning = false;
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> lists = am.getRunningServices(30);
+
+        for (ActivityManager.RunningServiceInfo info : lists) {//判断服务
+            if(info.service.getClassName().equals(serviceName)){
+                Log.i("Service1进程", ""+info.service.getClassName());
+                isRunning = true;
+            }
+        }
+
+
+        return isRunning;
+    }
+
 }
