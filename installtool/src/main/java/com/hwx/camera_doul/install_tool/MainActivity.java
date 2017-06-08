@@ -18,6 +18,8 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hwx.camera_doul.install_tool.util.LongRunningService;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //启动定时任务服务
+        Intent intent = new Intent(this, LongRunningService.class);
+        startService(intent);
+
         TextView text= (TextView) findViewById(R.id.text);
         if (getIntent().getExtras()==null) {
             Toast.makeText(this,"no url get",Toast.LENGTH_SHORT).show();

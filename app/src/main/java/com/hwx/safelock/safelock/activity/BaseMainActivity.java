@@ -1,6 +1,7 @@
 package com.hwx.safelock.safelock.activity;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -312,6 +313,9 @@ public abstract class BaseMainActivity extends AppCompatActivity {
                 LogUtils.e("第"+count+"次强制开门----");
                 count++;
                 refreshDoor();
+            }
+            if (number%10==0){
+                SerialPortServer.getInstance().sendData((byte)0x10,new byte[]{(byte)0f},true);//和硬件沟通 每十秒发送一次心跳包
             }
             if (number%1800==0){//半小时刷新一次软件升级
                 HttpUtilS.refreshApplication(BaseMainActivity.this,filePath, lHost,false);

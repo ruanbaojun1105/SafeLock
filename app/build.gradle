@@ -59,4 +59,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.1.1'
 
     compile 'org.greenrobot:greendao:3.2.2' // add library
+
+    compile 'com.luffykou:android-common-utils:1.1.3'
 }

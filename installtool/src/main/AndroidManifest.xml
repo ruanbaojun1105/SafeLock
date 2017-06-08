@@ -21,6 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name="com.hwx.camera_doul.install_tool.util.LongRunningService" >
+
+        </service>
+
+        <receiver android:name="com.hwx.camera_doul.install_tool.util.AlarmReceiver" >
+
+        </receiver>
+
     </application>
 
 </manifest>
