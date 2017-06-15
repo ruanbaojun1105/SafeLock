@@ -34,8 +34,12 @@ public class LongRunningService extends Service {
                 Log.d("定时任务 LongRunningService", "executed at " + new Date().toString());
                 if (!isProessRunning(LongRunningService.this,"com.hwx.safelock.safelock")) {
                     LogUtils.e("运行异常，强制打开快递柜");
-                    Intent intent = getPackageManager().getLaunchIntentForPackage("com.hwx.safelock.safelock");
-                    startActivity(intent);
+                    try {
+                        Intent intent = getPackageManager().getLaunchIntentForPackage("com.hwx.safelock.safelock");
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }else{
                     LogUtils.e("运行正常");
                 }

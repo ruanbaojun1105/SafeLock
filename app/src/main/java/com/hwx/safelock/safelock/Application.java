@@ -93,7 +93,7 @@ public class Application extends android.app.Application {
     public void onCreate() {
         super.onCreate();
 
-        if (!BuildConfig.DEBUG) {
+        //if (!BuildConfig.DEBUG) {
             Cockroach.install(new Cockroach.ExceptionHandler() {
                 @Override
                 public void handlerException(final Thread thread, final Throwable throwable) {
@@ -111,7 +111,7 @@ public class Application extends android.app.Application {
                     });
                 }
             });
-        }
+        //}
         _instance = this;
         mContext = getApplicationContext();
         versionCode=getAppVersion();
@@ -167,6 +167,7 @@ public class Application extends android.app.Application {
         //String path = sp.getString("DEVICE", "/dev/ttyS0");
         //int baudrate = Integer.decode(sp.getString("BAUDRATE", "115200"));
         int baudrate =9600;
+
 			/* Check parameters */
         if ((path.length() == 0) || (baudrate == -1)) {
             throw new InvalidParameterException();

@@ -34,6 +34,8 @@ public class DialogUtil {
         return params;
     }*/
     public static void showErrorWithStatus(final SVProgressHUD mSVProgressHUD, final String str){
+        if (mSVProgressHUD==null)
+            return;
         mSVProgressHUD.getView().post(new Runnable() {
             @Override
             public void run() {
@@ -46,6 +48,8 @@ public class DialogUtil {
         });
     }
     public static void showInfoWithStatus(final SVProgressHUD mSVProgressHUD, final String str){
+        if (mSVProgressHUD==null)
+            return;
         mSVProgressHUD.getView().post(new Runnable() {
             @Override
             public void run() {
@@ -60,6 +64,8 @@ public class DialogUtil {
         /*mSVProgressHUD.showInfoWithStatus("这是提示", SVProgressHUD.SVProgressHUDMaskType.None);
         mSVProgressHUD.showWithStatus("加载中...");
         mSVProgressHUD.showErrorWithStatus("不约，叔叔我们不约～", SVProgressHUD.SVProgressHUDMaskType.GradientCancel);*/
+        if (mSVProgressHUD==null)
+            return;
         mSVProgressHUD.getView().post(new Runnable() {
             @Override
             public void run() {

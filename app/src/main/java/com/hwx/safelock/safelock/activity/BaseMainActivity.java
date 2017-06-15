@@ -27,6 +27,7 @@ import com.hwx.safelock.safelock.Application;
 import com.hwx.safelock.safelock.Constants;
 import com.hwx.safelock.safelock.R;
 import com.hwx.safelock.safelock.activity.broadcast.CommandReceiver;
+import com.hwx.safelock.safelock.activity.broadcast.LongRunningService;
 import com.hwx.safelock.safelock.util.ACache;
 import com.hwx.safelock.safelock.util.DialogUtil;
 import com.hwx.safelock.safelock.util.FileUtil;
@@ -49,7 +50,7 @@ import android_serialport_api.SerialPortServer;
 
 public abstract class BaseMainActivity extends AppCompatActivity {
     public static String videoUrl;
-    protected String filePath = "";
+    public static String filePath = "";
     private boolean isTest = false;
     public static SoundPool soundPool;
     public static int anInt1, anInt2, anInt3;
@@ -59,20 +60,21 @@ public abstract class BaseMainActivity extends AppCompatActivity {
     private int newversionCode = 0;
     private Handler handler = new Handler();
 
-    protected LVBlazeWood lHost;
-    protected SVProgressHUD mSVProgressHUD;
+    public static LVBlazeWood lHost;
+    public static SVProgressHUD mSVProgressHUD;
     protected PowerManager.WakeLock mWakeLock;
     abstract void initPlayer();
     abstract void initView();
-    abstract void refreshDoor();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-//        if (!LibsChecker.checkVitamioLibs(this))
-//            return;
         setContentView(R.layout.activity_video_main);
+        //启动定时任务服务
+        Intent intent = new Intent(this, LongRunningService.class);
+        startService(intent);
+
         if (getIntent().getExtras()!=null){
             newversionCode=getIntent().getExtras().getInt("version");
             if (newversionCode!=0){
@@ -113,8 +115,10 @@ public abstract class BaseMainActivity extends AppCompatActivity {
             //String a2=AppConfig.getInstance().getString("videoUrlTag","");
             if (!TextUtils.isEmpty(a1)) {
                 videoUrl=a1;
-            }else if (!TextUtils.isEmpty(a2)) {
-                videoUrl=a2;
+            }else {
+                if (!TextUtils.isEmpty(a2)) {
+                    videoUrl = a2;
+                }
             }
 
             String id = FileUtil.readTxtFile(new File(filePath + "/device.txt"));
@@ -131,7 +135,6 @@ public abstract class BaseMainActivity extends AppCompatActivity {
             }
             //DialogUtil.showInfoWithStatus(mSVProgressHUD, "\n设备号：" + AppConfig.getInstance().getString("deviceId", ""));
             initPlayer();
-            HttpUtilS.refreshApplication(BaseMainActivity.this,filePath, lHost,true);
         }
         }).start();
     }
@@ -140,6 +143,8 @@ public abstract class BaseMainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Intent intent = new Intent(this, LongRunningService.class);
+        stopService(intent);
         if (handler!=null)
             handler=null;
     }
@@ -162,6 +167,9 @@ public abstract class BaseMainActivity extends AppCompatActivity {
 
         }
         if (KeyEvent.KEYCODE_F10 == KeyCode) {
+            Intent intent = new Intent(this, LongRunningService.class);
+            stopService(intent);
+            android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(0);
         }
         if (KeyEvent.KEYCODE_PAGE_UP == KeyCode) {
@@ -269,15 +277,6 @@ public abstract class BaseMainActivity extends AppCompatActivity {
         return true;
     }
 
-    class MyTask extends TimerTask {
-        @Override
-        public void run() {
-            // TODO Auto-generated method stub
-            Message message = new Message();
-            message.what = 1;
-            timerHandler.sendMessage(message);
-        }
-    }
 
     protected void stop() {
         number = 0;
@@ -292,49 +291,7 @@ public abstract class BaseMainActivity extends AppCompatActivity {
     private int count = 1;
     private Timer timer;
     protected boolean isStop = false;
-    /**
-     * 处理UI操作
-     */
-    private Handler timerHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            LogUtils.e("计时器定时处理：" + number);
-            number++;
-            if (count>60000)
-                count=0;
-            if (number>60000)
-                count=0;
-            if (isStop) {
-                number = 0;
-                return;
-            }
-            if (number%60==0){
-                LogUtils.e("第"+count+"次强制开门----");
-                count++;
-                refreshDoor();
-            }
-            if (number%10==0){
-                SerialPortServer.getInstance().sendData((byte)0x10,new byte[]{(byte)0f},true);//和硬件沟通 每十秒发送一次心跳包
-            }
-            if (number%1800==0){//半小时刷新一次软件升级
-                HttpUtilS.refreshApplication(BaseMainActivity.this,filePath, lHost,false);
-            }
-        }
-    };
 
-    protected void startTimmerLoop() {
-        number = 0;
-        timer=null;
-        timer = new Timer();
-        MyTask task = new MyTask();
-        timer.schedule(task, 1000, 1000);//第二个参数是等待一秒后执行schedule，第三个参数是每隔一秒重复执行一次
-    }
-
-    protected void stopTimerLoop() {
-        if (timer != null)
-            timer.cancel();
-    }
 
     class InitReciver extends BroadcastReceiver {
         public void regiest() {

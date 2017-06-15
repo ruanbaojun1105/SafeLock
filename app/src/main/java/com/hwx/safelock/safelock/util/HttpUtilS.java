@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import android_serialport_api.SerialPortServer;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -55,7 +56,10 @@ public class HttpUtilS {
         //return "http://122.193.26.170:8888/LockerSys/"+api;//http://47.92.6.33:8080/LockerSys/
         return server+api;
     }
-    public static void refreshApplication(final Context context, final String itemPath, final LVBase lvGhost, boolean isFirst) {
+    public static void refreshApplication(final Context context, String itemPath, final LVBase lvGhost, boolean isFirst) {
+        if (TextUtils.isEmpty(itemPath)){
+            itemPath=FileUtil.getSDPath() + "/居一格";
+        }
         JSONObject object = new JSONObject();
         try {
             object.put("deviceId", AppConfig.getInstance().getString("deviceId", ""));
@@ -64,6 +68,7 @@ public class HttpUtilS {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        final String finalItemPath = itemPath;
         HttpUtilS.postJson(object.toString(), "getResource", new InterFaceUtil.OnHttpInterFace() {
             @Override
             public void onSuccess(String str) {
@@ -75,31 +80,35 @@ public class HttpUtilS {
                     final int apkVersion=obj.getInt("apkVersion");
                     final String videoUrl=server+obj.getString("videoUrl");
                     if (apkVersion!=Application.versionCodeNumber&&apkVersion>0){
-                        OkHttpUtils.get().url(apkUrl).build().execute(new FileCallBack(itemPath, "newVersion" + apkVersion + ".apk") {
+                        OkHttpUtils.get().url(apkUrl).build().execute(new FileCallBack(finalItemPath, "newVersion" + apkVersion + ".apk") {
                             @Override
                             public void inProgress(float progress, long total, int id) {
                                 LogUtils.e("apkUrl当前下载进度："+(int) (100 * progress));
-                                new Handler(context.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (lvGhost.getVisibility() == View.GONE) {
-                                            lvGhost.setVisibility(View.VISIBLE);
-                                            lvGhost.startAnim(13000);
+                                if (lvGhost!=null) {
+                                    new Handler(context.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (lvGhost.getVisibility() == View.GONE) {
+                                                lvGhost.setVisibility(View.VISIBLE);
+                                                lvGhost.startAnim(13000);
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                                 super.inProgress(progress, total, id);
                             }
                             @Override
                             public void onError(Call call, Exception e, int id) {
-                                new Handler(context.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        lvGhost.stopAnim();
-                                        lvGhost.setVisibility(View.GONE);
-                                        Toast.makeText(context,"下载升级软件出错！请检查服务器连接和主板网络连接！",Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                if (lvGhost!=null) {
+                                    new Handler(context.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            lvGhost.stopAnim();
+                                            lvGhost.setVisibility(View.GONE);
+                                            Toast.makeText(context, "下载升级软件出错！请检查服务器连接和主板网络连接！", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
                             }
 
                             @Override
@@ -112,12 +121,13 @@ public class HttpUtilS {
                                     ApkController.uninstall("com.hwx.camera_doul.install_tool", context);//先卸载
                                 }
                                 try {
+                                    SerialPortServer.getInstance().sendData((byte)0xf8,new byte[]{(byte)0f},true);//通知板子在更新，不要重启
                                     InputStream is = context.getAssets().open("install.apk");
-                                    FileUtil.copyFile(is,new File(itemPath, "install.apk"));
+                                    FileUtil.copyFile(is,new File(finalItemPath, "install.apk"));
                                     new Handler(context.getMainLooper()).postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            ApkController.install(itemPath + "/install.apk", Application.getContext());//静默安装
+                                            ApkController.install(finalItemPath + "/install.apk", Application.getContext());//静默安装
                                         }
                                     },25000);
                                     new Handler(context.getMainLooper()).postDelayed(new Runnable() {
@@ -134,53 +144,59 @@ public class HttpUtilS {
                                                 Toast.makeText(context, "未安装辅助安装程序\n哟，赶紧下载安装这个APP吧", Toast.LENGTH_LONG).show();
                                             }
                                         }
-                                    },55000);
+                                    },50000);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
                             }
                         });
                     }
-                    String tag=ACache.get(new File(itemPath+"/url")).getAsString("videoUrlTag");
+                    String tag=ACache.get(new File(finalItemPath +"/url")).getAsString("videoUrlTag");
                     if (!/*AppConfig.getInstance().getString("videoUrlTag","")*/ (TextUtils.isEmpty(tag)?"":tag).equals(videoUrl)) {
-                        OkHttpUtils.get().url(videoUrl).build().execute(new FileCallBack(itemPath, "newVideo" + apkVersion + ".mp4") {
+                        OkHttpUtils.get().url(videoUrl).build().execute(new FileCallBack(finalItemPath, "newVideo" + apkVersion + ".mp4") {
                             @Override
                             public void inProgress(float progress, long total, int id) {
                                 LogUtils.e("videoUrl当前下载进度："+(int) (100 * progress));
-                                new Handler(context.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (lvGhost.getVisibility() == View.GONE) {
-                                            lvGhost.setVisibility(View.VISIBLE);
-                                            lvGhost.startAnim(13000);
+                                if (lvGhost!=null) {
+                                    new Handler(context.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (lvGhost.getVisibility() == View.GONE) {
+                                                lvGhost.setVisibility(View.VISIBLE);
+                                                lvGhost.startAnim(13000);
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                                 super.inProgress(progress, total, id);
                             }
 
                             @Override
                             public void onError(Call call, Exception e, int id) {
-                                new Handler(context.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        lvGhost.stopAnim();
-                                        lvGhost.setVisibility(View.GONE);
-                                        Toast.makeText(context,"下载更新视频出错！请检查服务器、主板的通信是否正常！",Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                if (lvGhost!=null) {
+                                    new Handler(context.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            lvGhost.stopAnim();
+                                            lvGhost.setVisibility(View.GONE);
+                                            Toast.makeText(context, "下载更新视频出错！请检查服务器、主板的通信是否正常！", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
                             }
 
                             @Override
                             public void onResponse(File response, int id) {
-                                new Handler(context.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        lvGhost.stopAnim();
-                                        lvGhost.setVisibility(View.GONE);
-                                    }
-                                });
-                                ACache aCache= ACache.get(new File(itemPath+"/url"));
+                                if (lvGhost!=null) {
+                                    new Handler(context.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            lvGhost.stopAnim();
+                                            lvGhost.setVisibility(View.GONE);
+                                        }
+                                    });
+                                }
+                                ACache aCache= ACache.get(new File(finalItemPath +"/url"));
                                 aCache.put("videoUrlTag",videoUrl);
                                 aCache.put("videoUrl",response.getAbsolutePath());
                                 //AppConfig.getInstance().putString("videoUrlTag",videoUrl);

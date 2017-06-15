@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="E:\Project\SafeLock\QRCodeScanZbar\libs"><file name="armeabi/libzbar.so" path="E:\Project\SafeLock\QRCodeScanZbar\libs\armeabi\libzbar.so"/><file name="armeabi-v7a/libzbar.so" path="E:\Project\SafeLock\QRCodeScanZbar\libs\armeabi-v7a\libzbar.so"/></source></dataSet><dataSet config="debug"><source path="E:\Project\SafeLock\QRCodeScanZbar\build-types\debug\jniLibs"/></dataSet></merger>

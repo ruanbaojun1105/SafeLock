@@ -113,7 +113,7 @@ public class SaveLockRestDetailActivity extends AppCompatActivity {
             if (KeyEvent.KEYCODE_F7 == KeyCode) {
                 List<String> strings=new ArrayList<String>();
                 for (int i = 0; i < 23; i++) {
-                    strings.add(i+"\t号");
+                    strings.add(i+"");
                 }
                 int co=6;
                 if (strings.size()>24&&strings.size()<52)
@@ -127,7 +127,7 @@ public class SaveLockRestDetailActivity extends AppCompatActivity {
             if (KeyEvent.KEYCODE_F8 == KeyCode) {
                 List<String> strings=new ArrayList<String>();
                 for (int i = 0; i < 50; i++) {
-                    strings.add(i+"\t号");
+                    strings.add(i+"");
                 }
                 int co=6;
                 if (strings.size()>24&&strings.size()<52)
@@ -141,7 +141,7 @@ public class SaveLockRestDetailActivity extends AppCompatActivity {
             if (KeyEvent.KEYCODE_F9 == KeyCode) {
                 List<String> strings=new ArrayList<String>();
                 for (int i = 0; i < 71; i++) {
-                    strings.add(i+" 号");
+                    strings.add(i+"");
                 }
                 int co=6;
                 if (strings.size()>24&&strings.size()<52)
@@ -163,18 +163,10 @@ public class SaveLockRestDetailActivity extends AppCompatActivity {
         mSVProgressHUD=new SVProgressHUD(this);
         initView();
         mAdapter = new ItemClickAdapter(new ArrayList<String>());
-        LinearLayout layout=new LinearLayout(this);
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-        TextView textView=new TextView(this);
-        LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(Application.dip2px(50),Application.dip2px(10));
-        textView.setLayoutParams(layoutParams);
-        textView.setBackgroundColor(getResources().getColor(R.color.colormain3));
         TextView textView2=new TextView(this);
-        textView2.setText("表示可用柜门");
+        textView2.setText("可用柜门");
         //layout.setGravity(Gravity.CENTER);
-        layout.addView(textView);
-        layout.addView(textView2);
-        mAdapter.addHeaderView(layout);
+        mAdapter.addHeaderView(textView2);
         gridLayoutManager=new GridLayoutManager(this,5);
         detail_list.setLayoutManager(gridLayoutManager);
         detail_list.setAdapter(mAdapter);
@@ -202,7 +194,7 @@ public class SaveLockRestDetailActivity extends AppCompatActivity {
                     }
                     final List<String> strings=new ArrayList<String>();
                     for (int i = 0; i < arr.length; i++) {
-                        strings.add(arr[i]+"\t号");
+                        strings.add(arr[i]+"");
                     }
                     detail_list.post(new Runnable() {
                         @Override

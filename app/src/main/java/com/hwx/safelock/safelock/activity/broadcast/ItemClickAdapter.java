@@ -22,6 +22,5 @@ public class ItemClickAdapter extends BaseQuickAdapter<String, BaseViewHolder> {
     @Override
     protected void convert(final BaseViewHolder helper, final String item) {
         helper.setText(R.id.text,item);
-        DrawableUtil.displayImage(mContext, (ImageView) helper.getView(R.id.image), R.drawable.guizi);
     }
 }

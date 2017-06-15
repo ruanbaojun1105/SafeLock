@@ -1,5 +1,6 @@
 package com.hwx.safelock.safelock.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -7,11 +8,13 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bigkoo.svprogresshud.SVProgressHUD;
 import com.hwx.safelock.safelock.AppConfig;
 import com.hwx.safelock.safelock.Application;
 import com.hwx.safelock.safelock.R;
+import com.hwx.safelock.safelock.activity.broadcast.LongRunningService;
 import com.hwx.safelock.safelock.fragment.VideoFragment;
 import com.hwx.safelock.safelock.util.DialogUtil;
 import com.hwx.safelock.safelock.util.FileUtil;
@@ -79,7 +82,6 @@ public class MainActivity extends BaseMainActivity implements View.OnClickListen
         anInt3 = soundPool.load(this, R.raw.jideguanmen, 1);
         lHost=(LVBlazeWood) findViewById(R.id.lv_LVGhost);
         lHost.startAnim();
-        startTimmerLoop();
 
         TextView textView= (TextView) findViewById(R.id.textView);
         //textView.setText(ScreenParamsUtil.getInstance(this).toString());
@@ -123,8 +125,7 @@ public class MainActivity extends BaseMainActivity implements View.OnClickListen
         });
     }
     /*强制刷新开门*/
-    @Override
-    void refreshDoor() {
+    public static void refreshDoor(final Context context, final SVProgressHUD mSVProgressHUD) {
         try {
             JSONObject object = new JSONObject();
             object.put("deviceId", AppConfig.getInstance().getString("deviceId", ""));
@@ -140,9 +141,9 @@ public class MainActivity extends BaseMainActivity implements View.OnClickListen
                             @Override
                             public void run() {
                                 try {
-                                    Thread.sleep(1000 * (detailData(obj.getString("openDoor"), (byte) 0x01)));
-                                    Thread.sleep(1000 * (detailData(obj.getString("openHeat"), (byte) 0x02)));
-                                    Thread.sleep(1000 * (detailData(obj.getString("closeHeat"), (byte) 0x03)));
+                                    Thread.sleep(1000 * (detailData(context,obj.getString("openDoor"), (byte) 0x01)));
+                                    Thread.sleep(1000 * (detailData(context,obj.getString("openHeat"), (byte) 0x02)));
+                                    Thread.sleep(1000 * (detailData(context,obj.getString("closeHeat"), (byte) 0x03)));
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 } catch (InterruptedException e) {
@@ -192,6 +193,17 @@ public class MainActivity extends BaseMainActivity implements View.OnClickListen
                 if (!Application.JNI_SUCCESS) {
                     Application.JNI_SUCCESS = SerialPortServer.getInstance().initPort();
                 }
+                if (!LongRunningService.isProessRunning(MainActivity.this,"com.hwx.camera_doul.install_tool")) {
+                    LogUtils.e("运行异常，强制打开快递柜");
+                    try {
+                        Intent intent = getPackageManager().getLaunchIntentForPackage("com.hwx.camera_doul.install_tool");
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    LogUtils.e("运行正常");
+                }
             }
         }).start();
         star();
@@ -201,12 +213,11 @@ public class MainActivity extends BaseMainActivity implements View.OnClickListen
 
     @Override
     protected void onDestroy() {
-        stopTimerLoop();
         //SerialPortServer.getInstance().close();//不可关闭
         super.onDestroy();
     }
 
-    private synchronized int detailData(String str, final byte code) {
+    public static synchronized int detailData(Context context,String str, final byte code) {
         if (TextUtils.isEmpty(str)){
             return 0;
         }
@@ -222,7 +233,7 @@ public class MainActivity extends BaseMainActivity implements View.OnClickListen
             if (TextUtils.isDigitsOnly(arr[i])){
                 try {
                     final int position=Integer.parseInt(arr[i]);
-                    new Handler(getMainLooper()).postDelayed(new Runnable() {
+                    new Handler(context.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             SerialPortServer.getInstance().sendData(code, new byte[]{(byte) position}, true);//开锁
