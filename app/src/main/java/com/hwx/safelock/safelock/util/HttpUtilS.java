@@ -79,10 +79,11 @@ public class HttpUtilS {
                     String apkUrl=server+obj.getString("apkUrl");
                     final int apkVersion=obj.getInt("apkVersion");
                     final String videoUrl=server+obj.getString("videoUrl");
-                    if (apkVersion!=Application.versionCodeNumber&&apkVersion>0){
+                    if (apkVersion!=Application.versionCodeNumber&&apkVersion>0&&!Constants.isDownLoadAPK){
                         OkHttpUtils.get().url(apkUrl).build().execute(new FileCallBack(finalItemPath, "newVersion" + apkVersion + ".apk") {
                             @Override
                             public void inProgress(float progress, long total, int id) {
+                                Constants.isDownLoadAPK=true;
                                 LogUtils.e("apkUrl当前下载进度："+(int) (100 * progress));
                                 if (lvGhost!=null) {
                                     new Handler(context.getMainLooper()).post(new Runnable() {
@@ -99,6 +100,7 @@ public class HttpUtilS {
                             }
                             @Override
                             public void onError(Call call, Exception e, int id) {
+                                Constants.isDownLoadAPK=false;
                                 if (lvGhost!=null) {
                                     new Handler(context.getMainLooper()).post(new Runnable() {
                                         @Override
@@ -114,6 +116,7 @@ public class HttpUtilS {
                             @Override
                             public void onResponse(File response, int id) {
                                 //处理版本升级
+                                Constants.isDownLoadAPK=false;
                                 final String downFileStr=response.getAbsolutePath();
                                 LogUtils.e("apkUrl,文件下载成功,开始打开安装辅助程序");
                                 boolean isInstall = FileUtil.isAppInstalled(context, "com.hwx.camera_doul.install_tool");
@@ -152,11 +155,13 @@ public class HttpUtilS {
                         });
                     }
                     String tag=ACache.get(new File(finalItemPath +"/url")).getAsString("videoUrlTag");
-                    if (!/*AppConfig.getInstance().getString("videoUrlTag","")*/ (TextUtils.isEmpty(tag)?"":tag).equals(videoUrl)) {
+                    if (!/*AppConfig.getInstance().getString("videoUrlTag","")*/ (TextUtils.isEmpty(tag)?"":tag).equals(videoUrl)&&!Constants.isDownLoadVideo) {
+                        LogUtils.e("已缓存视频路径："+tag);
                         OkHttpUtils.get().url(videoUrl).build().execute(new FileCallBack(finalItemPath, "newVideo" + apkVersion + ".mp4") {
                             @Override
                             public void inProgress(float progress, long total, int id) {
                                 LogUtils.e("videoUrl当前下载进度："+(int) (100 * progress));
+                                Constants.isDownLoadVideo=true;
                                 if (lvGhost!=null) {
                                     new Handler(context.getMainLooper()).post(new Runnable() {
                                         @Override
@@ -173,6 +178,7 @@ public class HttpUtilS {
 
                             @Override
                             public void onError(Call call, Exception e, int id) {
+                                Constants.isDownLoadVideo=false;
                                 if (lvGhost!=null) {
                                     new Handler(context.getMainLooper()).post(new Runnable() {
                                         @Override
@@ -187,6 +193,7 @@ public class HttpUtilS {
 
                             @Override
                             public void onResponse(File response, int id) {
+                                Constants.isDownLoadVideo=false;
                                 if (lvGhost!=null) {
                                     new Handler(context.getMainLooper()).post(new Runnable() {
                                         @Override

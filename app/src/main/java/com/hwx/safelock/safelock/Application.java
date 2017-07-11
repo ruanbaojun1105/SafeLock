@@ -29,6 +29,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.hwx.safelock.safelock.activity.broadcast.MyLifecycleHandler;
 import com.hwx.safelock.safelock.db.DaoMaster;
 import com.hwx.safelock.safelock.db.DaoSession;
 import com.hwx.safelock.safelock.db.GreenDaoManager;
@@ -112,6 +113,8 @@ public class Application extends android.app.Application {
                 }
             });
         //}
+
+        registerActivityLifecycleCallbacks(new MyLifecycleHandler());
         _instance = this;
         mContext = getApplicationContext();
         versionCode=getAppVersion();

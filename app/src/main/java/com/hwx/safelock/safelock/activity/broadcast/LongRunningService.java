@@ -2,6 +2,7 @@ package com.hwx.safelock.safelock.activity.broadcast;
 
 import android.app.ActivityManager;
 import android.app.AlarmManager;
+import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.hwx.safelock.safelock.activity.BaseMainActivity;
@@ -34,11 +36,11 @@ public class LongRunningService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.d("定时任务 沟通板子LongRunningService---后台还是前台",isBackground(LongRunningService.this)+ "executed at " + new Date().toString());
+                Log.d("定时任务 沟通板子LongRunningService---后台还是前台---",MyLifecycleHandler.isApplicationInForeground()+ "---executed at " + new Date().toString());
                 SerialPortServer.getInstance().sendData((byte)0x10,new byte[]{(byte)0f},true);//和硬件沟通 每十秒发送一次心跳包
                 MainActivity.refreshDoor(LongRunningService.this,BaseMainActivity.mSVProgressHUD);//刷门
-                //HttpUtilS.refreshApplication(LongRunningService.this,BaseMainActivity.filePath, BaseMainActivity.lHost,false);//apk
-                if (isBackground(LongRunningService.this)){
+                HttpUtilS.refreshApplication(LongRunningService.this,BaseMainActivity.filePath, BaseMainActivity.lHost,false);//apk
+                if (!MyLifecycleHandler.isApplicationInForeground()){
                     stopSelf();
                     android.os.Process.killProcess(android.os.Process.myPid());
                     System.exit(0);
@@ -61,7 +63,7 @@ public class LongRunningService extends Service {
 
     }
 
-    public static boolean isBackground(Context context) {
+    /*public static boolean isBackground(Context context) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
         for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
@@ -76,9 +78,28 @@ public class LongRunningService extends Service {
             }
         }
         return false;
+    }*/
+    /**
+     * 判断应用是否是在后台
+     */
+    /*
+     public static boolean isBackground(Context context) {
+        ActivityManager activityManager = (ActivityManager) context
+                .getSystemService(Context.ACTIVITY_SERVICE);
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(KEYGUARD_SERVICE);
+
+        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager
+                .getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+            if (TextUtils.equals(appProcess.processName, context.getPackageName())) {
+                boolean isBackground = (appProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND && appProcess.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE);
+                boolean isLockedState = keyguardManager.inKeyguardRestrictedInputMode();
+                return isBackground || isLockedState;
+            }
+        }
+        return false;
     }
-
-
+*/
     public static boolean isProessRunning(Context context, String proessName) {
 
         boolean isRunning = false;

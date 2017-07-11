@@ -32,5 +32,8 @@ public class Constants {
 
     public static Long DB_KEY=8888L;
 
+    public static boolean isDownLoadVideo=false;
+    public static boolean isDownLoadAPK=false;
+
 
 }

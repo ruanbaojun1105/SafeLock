@@ -167,7 +167,7 @@ public class MainActivity extends BaseMainActivity implements View.OnClickListen
     }
     @Override
     protected void onPause() {
-        MobclickAgent.onPageEnd("main"); // （仅有Activity的应用中SDK自动调用，不需要单独写）保证 onPageEnd 在onPause 之前调用,因为 onPause 中会保存信息。"SplashScreen"为页面名称，可自定义
+        MobclickAgent.onPageEnd("main");
         MobclickAgent.onPause(this);
         try {
             stop();
@@ -180,8 +180,8 @@ public class MainActivity extends BaseMainActivity implements View.OnClickListen
 
     @Override
     protected void onResume() {
-        MobclickAgent.onPageStart("main"); //统计页面(仅有Activity的应用中SDK自动调用，不需要单独写。"SplashScreen"为页面名称，可自定义)
-        MobclickAgent.onResume(this);          //统计时长
+        MobclickAgent.onPageStart("main");
+        MobclickAgent.onResume(this);
         new Thread(new Runnable() {
             @Override
             public void run() {
