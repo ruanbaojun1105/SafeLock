@@ -1,41 +1,33 @@
 package com.hwx.safelock.safelock.fragment;
 
-/**
- * Created by Administrator on 2016/8/22.
- */
-
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.Fragment;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.MediaController;
+import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.hwx.safelock.safelock.AppConfig;
 import com.hwx.safelock.safelock.R;
+import com.hwx.safelock.safelock.activity.SimpleFragment;
 import com.hwx.safelock.safelock.util.LogUtils;
 import com.hwx.safelock.safelock.weight.FullScreenWebView;
-import com.ldoublem.loadingviewlib.view.LVBlazeWood;
+
+import butterknife.BindView;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class VideoFragment extends Fragment implements MediaPlayer.OnCompletionListener{
+public class VideoFragment extends SimpleFragment implements MediaPlayer.OnCompletionListener {
     public static final String TAG = "VideoPlayerFragment";
-    private FullScreenWebView mVideoView;
-    private Uri mUri;
+    @BindView(R.id.videoView)
+    FullScreenWebView mVideoView;
+    @BindView(R.id.video_lin)
+    LinearLayout videoLin;
     private int mPositionWhenPaused = -1;
-    //private MediaController mMediaController;
-    private ImageView detail_image;
     private String videoUrl;
 
     public VideoFragment() {
@@ -43,29 +35,31 @@ public class VideoFragment extends Fragment implements MediaPlayer.OnCompletionL
 
     public static VideoFragment newInstance(String videoUrl) {
         VideoFragment fragment = new VideoFragment();
-        Bundle bundle=new Bundle();
-        bundle.putString("videoUrl",videoUrl);
+        Bundle bundle = new Bundle();
+        bundle.putString("videoUrl", videoUrl);
         fragment.setArguments(bundle);
         return fragment;
     }
 
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_video;
+    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_video, container, false);
-        mVideoView = (FullScreenWebView) rootView.findViewById(R.id.videoView);
+    protected void initEventAndData() {
         mVideoView.setKeepScreenOn(true);
-        videoUrl=getArguments().getString("videoUrl");
-        if (TextUtils.isEmpty(videoUrl)){
+        videoUrl = getArguments().getString("videoUrl");
+        mPositionWhenPaused = AppConfig.getInstance().getInt("position_video", -1);
+        if (TextUtils.isEmpty(videoUrl)) {
             Toast.makeText(getActivity(), "视频文件异常", Toast.LENGTH_SHORT).show();
-            return rootView;
+            return;
         }
         //mMediaController = new MediaController(getContext());
         //VideoView与MediaController进行关联
         mVideoView.setVideoPath(videoUrl);
         //mVideoView.setMediaController(mMediaController);
-       // mMediaController.setMediaPlayer(mVideoView);
+        // mMediaController.setMediaPlayer(mVideoView);
         //让VideiView获取焦点
         mVideoView.requestFocus();
         mVideoView.start();
@@ -98,6 +92,13 @@ public class VideoFragment extends Fragment implements MediaPlayer.OnCompletionL
                 mp.setLooping(true);
             }
         });
+        mVideoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                mPositionWhenPaused=0;
+                return true;
+            }
+        });
         mVideoView.setOnCompletionListener(this);
         //mVideoView.setOnErrorListener(this);
         mVideoView.setOnTouchListener(new View.OnTouchListener() {
@@ -106,16 +107,13 @@ public class VideoFragment extends Fragment implements MediaPlayer.OnCompletionL
                 return true;
             }
         });
-        rootView.findViewById(R.id.video_lin).setOnTouchListener(new View.OnTouchListener() {
+        videoLin.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return true;
             }
         });
-        mPositionWhenPaused=AppConfig.getInstance().getInt("position_video",-1);
-        return rootView;
     }
-
 
 
     //Video播完的时候得到通知
@@ -136,10 +134,9 @@ public class VideoFragment extends Fragment implements MediaPlayer.OnCompletionL
                     e.printStackTrace();
                 }
             }
-        },5000);
+        }, 5000);
 
     }
-
 
     //暂停
     @Override
@@ -147,8 +144,9 @@ public class VideoFragment extends Fragment implements MediaPlayer.OnCompletionL
         try {
             // Stop video when the activity is pause.
             mPositionWhenPaused = mVideoView.getCurrentPosition();
-            mVideoView.stopPlayback();
-            AppConfig.getInstance().putInt("position_video",mPositionWhenPaused);
+            AppConfig.getInstance().putInt("position_video", mPositionWhenPaused);
+            if (mVideoView.isPlaying())
+                mVideoView.stopPlayback();
             Log.d(TAG, "OnStop: mPositionWhenPaused = " + mPositionWhenPaused);
             Log.d(TAG, "OnStop: getDuration  = " + mVideoView.getDuration());
         } catch (Exception e) {
@@ -174,8 +172,9 @@ public class VideoFragment extends Fragment implements MediaPlayer.OnCompletionL
 
     @Override
     public void onDestroyView() {
-        mVideoView=null;
+        mVideoView = null;
         //mMediaController=null;
         super.onDestroyView();
     }
+
 }
